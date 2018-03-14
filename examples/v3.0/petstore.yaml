@@ -29,7 +29,7 @@ tags:
       description: Find out more about our store
       url: 'http://swagger.io'
 paths:
-  /pet:
+  /*:
     post:
       tags:
         - pet
@@ -64,7 +64,7 @@ paths:
             - 'read:pets'
       requestBody:
         $ref: '#/components/requestBodies/Pet'
-  /pet/findByStatus:
+  /pet/findByStatus/*:
     get:
       tags:
         - pet
@@ -106,7 +106,7 @@ paths:
         - petstore_auth:
             - 'write:pets'
             - 'read:pets'
-  /pet/findByTags:
+  /pet/findByTags*:
     get:
       tags:
         - pet
@@ -146,7 +146,7 @@ paths:
             - 'write:pets'
             - 'read:pets'
       deprecated: true
-  '/pet/{petId}':
+  '/pet*/{petId}':
     get:
       tags:
         - pet

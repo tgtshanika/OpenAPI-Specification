@@ -20,7 +20,7 @@
   ],
   "paths": {
     "/pets": {
-      "wswswsws": {
+      "get": {
         "summary": "List all pets",
         "operationId": "listPets",
         "tags": [

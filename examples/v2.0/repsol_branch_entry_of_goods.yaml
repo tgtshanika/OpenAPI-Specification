@@ -1,0 +1,289 @@
+swagger: "2.0"
+info:
+  title: Repsol_branch_entry_of_goods
+  version: "1.0"
+  description: |
+    Entry of goods delivered at Repsol branches.
+    Entries must be created with a reference to the purchase order.
+    Before entries can be created, consumer must request purchase orders that are still "open" for the branch, i.e. not yet delivered.
+parameters:
+  userId:
+    in: header
+    name: X-Repsol-UserId
+    required: true
+    type: string
+    description: |
+      Identifies the individual that is requesting the operation. There are two types of users:
+      * Users with a Repsol account: identifier should have the format `<domain>\<username>`.
+      * Users without Repsol account: identifier should be a NIF or a CIF.
+  imei:
+    in: header
+    name: X-Repsol-HHIMEI
+    required: false
+    type: string
+    description: IMEI of the handheld device used to request the operation
+  branchCode:
+    in: path
+    name: branchCode
+    required: true
+    type: string
+    description: The branch code/number
+paths:
+  /branches/{branchCode}/entries:
+    post:
+      summary: Add new entry of goods 
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/branchCode'
+        - $ref: '#/parameters/userId'
+        - $ref: '#/parameters/imei'
+        - name: body
+          in: body
+          description: Object with new entry data
+          required: true
+          schema:
+            $ref: "#/definitions/Entry"
+      responses:
+        "201":
+          description: Successful operation. Entry of goods document has been created and linked to the related purchase order.
+          schema:
+            type: object
+            properties:
+              entryDocumentNumber:
+                type: string
+                description: The number/identifier of the new entry of goods document
+                example: "5067838338"
+        "400":
+          description: Entry data did not pass all validations. Check list of errors for details
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /branches/{branchCode}/pending_orders:
+    get:
+      summary: Retrieve pending (not yet delivered) purchase orders by Repsol branch
+      produces:
+        - application/json
+      parameters:
+        - $ref: '#/parameters/branchCode'
+        - $ref: '#/parameters/userId'
+        - $ref: '#/parameters/imei'
+      responses:
+        "200":
+          description: Successful operation. If the branch does not have any pending order, an empty collection will be returned.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/PurchaseOrder"
+definitions:
+  Entry:
+    type: object
+    required:
+      - header
+      - items
+    properties:
+      header:
+        $ref: "#/definitions/EntryHeader"
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Item"
+  EntryHeader:
+    type: object
+    required:
+      - entryDate
+      - deliveryNoteNumber
+      - purchaseOrderNumber
+    properties:
+      entryDate:
+        type: string
+        format: date
+        description: The entry date
+        example: "2017-07-23"
+      deliveryNoteNumber:
+        type: string
+        description: The number of the delivery note
+        example: "RE_230817_000004"
+      purchaseOrderNumber:
+        type: string
+        description: The number of the purchase order related to the new entry
+        example: "4564570840"
+  PurchaseOrder:
+    type: object
+    required:
+      - header
+      - items
+    properties:
+      header:
+        $ref: "#/definitions/PurchaseOrderHeader"
+      items:
+        type: array
+        items:
+          $ref: "#/definitions/Item"
+  PurchaseOrderHeader:
+    type: object
+    required:
+      - purchaseOrderNumber
+      - providerAccountNumber
+      - orderDate
+      - purchaseOrderType
+    properties:
+      purchaseOrderNumber:
+        type: string
+        description: The number of the purchase order document
+        example: "4564570840"
+      providerAccountNumber:
+        type: string
+        description: The account number of the provider or creditor
+        example: "134069"
+      orderDate:
+        type: string
+        format: date
+        description: Purchase order date
+        example: "2017-07-21"
+      purchaseOrderType:
+        type: string
+        description: The type of the purchase order document
+        example: "ZPRO"
+      incoterms:
+        type: string
+        description: The international commercial terms that apply to the purchase order
+        example: "Custo, Seguro e Frete"
+  Item:
+    type: object
+    required:
+      - productCode
+      - purchaseOrderIndex
+      - warehouseCode
+      - quantity
+    properties:
+      productCode:
+        type: string
+        description: The product code
+        example: "000000000000000064"
+      purchaseOrderIndex:
+        type: integer
+        format: int32
+        minimum: 10
+        multipleOf: 10
+        description: Index of the product within the purchase order
+        example: 10
+      warehouseCode:
+        type: string
+        description: The warehouse code/number
+        example: "ZT01"
+      quantity:
+        type: number
+        description: The number of items purchased
+        example: "48,000"
+      refund:
+        type: boolean
+        default: false
+        description: Indicates whether the item entry is a refund (`true`) or not (`false`).
+      price:
+        type: number
+        description: Net amount in purchase order's currency
+        example: "13,56"
+  ErrorResponse:
+    type: object
+    description: Contains additional information about the error response returned by the API
+    required:
+      - text
+      - timestamp
+      - method
+      - endpoint
+      - errors
+    properties:
+      text:
+        type: string
+        description: High level description of the error. It is meant to help developers identify and understand the issue
+        example: "Entry data did not pass all validations. Check list of errors for details."
+      timestamp:
+        type: string
+        format: date-time
+        description: Date and time of the request
+      method:
+        type: string
+        enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+        description: The HTTP method of the request
+      endpoint:
+        type: string
+        description: The endpoint which received the request
+        example: "/branches/{branchCode}/entries"
+      errors:
+        type: array
+        items:
+          $ref: "#/definitions/Error"
+        description: Detailed information of all the specific errors that occurred during the process of the request
+  Error:
+    type: object
+    description: Detailed description of individual error
+    required:
+      - code
+      - text
+    properties:
+      code:
+        type: string
+        description: Application specific error code
+        example: "EM7053"
+      text:
+        type: string
+        description: Error description
+        example: "Sólo es posible contabilizar en los periodos 2018/06 y 2018/05 de la sociedad 0094"
+      applicationLog:
+        $ref: "#/definitions/ErrorLog"
+      parameter:
+        $ref: "#/definitions/ErrorParameter"
+      system:
+        type: string
+        description: The (logic) system that is the source of the error
+        example: "DX0ESP052"
+      hints:
+        type: array
+        items:
+          type: string
+        description: List of hints (if available) on how to solve/avoid the error
+      info:
+        type: string
+        description: Link to API documentation which can contain detailed information about errors
+  ErrorLog:
+    type: object
+    description: Application logs information related to an individual error
+    required:
+      - logNumber
+      - messageNumber
+    properties:
+      logNumber:
+        type: string
+        description: The application log number
+      messageNumber:
+        type: number
+        format: int32
+        minimum: 0
+        description: The log message internal number
+  ErrorParameter:
+    type: object
+    description: Specific parameter information related to an individual error
+    required:
+      - name
+      - line
+    properties:
+      name:
+        type: string
+        description: The parameter name
+        example: "GOODSMVT_ITEM"
+      line:
+        type: number
+        format: int32
+        minimum: 1
+        description: The line number within the parameter
+        example: 1
+      field:
+        type: string
+        description: The field name within the parameter, if available

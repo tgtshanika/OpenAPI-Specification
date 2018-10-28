@@ -1,1 +1,3024 @@
-{"swagger":"2.0","info":{"title":"API-Cliente-Cartoes","version":"v1","termsOfService":"urn:tos","contact":{},"license":{"name":"Apache 2.0","url":"http://www.apache.org/licenses/LICENSE-2.0"}},"host":"10.200.5.103:8243","basePath":"/dwdw/v1","tags":[{"name":"cliente-api","description":"Cliente Api"},{"name":"conta-api","description":"Conta Api"}],"paths":{"/clientes/{numeroReceitaFederal}/contas":{"get":{"tags":["conta-api"],"summary":"Este endpoint busca as 50 primeiras contas do cliente pelo CPF ou CNPJ informado.","operationId":"getContasByNumeroReceitaFederalUsingGET","produces":["application/json"],"parameters":[{"name":"numeroReceitaFederal","in":"path","description":"Número identificador do CPF ou CNPJ do cliente da conta.","required":true,"type":"string"},{"name":"ativa","in":"query","description":"Filtro de conta ativa. Caso não informado, não fará nenhum filtro.","required":false,"type":"boolean"},{"name":"produtoMultiplo","in":"query","description":"Filtro tipo de produto múltiplo. Caso não informado, não fará nenhum filtro.","required":false,"type":"boolean"}],"responses":{"200":{"description":"Operação realizada com sucesso.","schema":{"$ref":"#/definitions/ContaDto"}},"204":{"description":"Não localizado contas para o Número Receita Federal informado","schema":{"type":"object"}},"400":{"description":"Problema com dados da requisição.","schema":{"$ref":"#/definitions/SimpleError"}},"401":{"description":"Operação não autorizada.","schema":{"$ref":"#/definitions/SimpleError"}},"403":{"description":"Operação proibida.","schema":{"$ref":"#/definitions/SimpleError"}},"417":{"description":"Problema de validação.","schema":{"$ref":"#/definitions/SimpleError"}},"500":{"description":"Problema inesperado.","schema":{"$ref":"#/definitions/SimpleError"}}},"x-auth-type":"Application & Application User","x-throttling-tier":"Unlimited"}},"/clientes/{numeroReceitaFederal}/resumo":{"get":{"tags":["cliente-api"],"summary":"Este endpoint informa o resumo de um cliente pelo número de seu CPF ou CNPJ buscando os primeiros 50 cartões com a possibilidade das 50 primeiras faturas das primeiras 50 contas","operationId":"getClienteResumoUsingGET","produces":["application/json"],"parameters":[{"name":"numeroReceitaFederal","in":"path","description":"Número identificador do CPF ou CNPJ do cliente.","required":true,"type":"string"},{"name":"produtoMultiplo","in":"query","description":"Filtro de produto múltiplo. Caso não informado, retorna todos os produtos.","required":false,"type":"boolean"},{"name":"contaAtiva","in":"query","description":"Filtro de conta ativa. Caso não informado, retorna todas as contas.","required":false,"type":"boolean"},{"name":"cartaoAtivo","in":"query","description":"Filtro de cartão ativo. Caso não informado, retorna todos os cartões.","required":false,"type":"boolean"},{"name":"buscaFatura","in":"query","description":"Filtro para informar se necessita das faturas ou não. Caso não informado, não retorna as faturas.","required":false,"type":"boolean"},{"name":"statusFatura","in":"query","description":"Filtro de fatura pelo status. Caso não informado, retorna todas as faturas.","required":false,"type":"string","enum":["TODAS","ABERTA","FECHADA"]},{"name":"idProduto","in":"query","description":"Filtro de produto. Pode ser informado múltiplas vezes. Caso não informado, retorna todas as contas.","required":false,"type":"array","items":{"type":"integer","format":"int32"},"collectionFormat":"multi"}],"responses":{"200":{"description":"Operação realizada com sucesso.","schema":{"$ref":"#/definitions/ClienteDto"}},"204":{"description":"Não localizado cliente para o Número Receita Federal informado","schema":{"type":"object"}},"400":{"description":"Problema com dados da requisição.","schema":{"$ref":"#/definitions/SimpleError"}},"401":{"description":"Operação não autorizada.","schema":{"$ref":"#/definitions/SimpleError"}},"403":{"description":"Operação proibida.","schema":{"$ref":"#/definitions/SimpleError"}},"417":{"description":"Problema de validação.","schema":{"$ref":"#/definitions/SimpleError"}},"500":{"description":"Problema inesperado.","schema":{"$ref":"#/definitions/SimpleError"}}},"x-auth-type":"Application & Application User","x-throttling-tier":"Unlimited"}}},"definitions":{"CartaoDto":{"type":"object","properties":{"dataEmissao":{"type":"string"},"id":{"type":"integer","format":"int64"},"idEstagio":{"type":"integer","format":"int32"},"idStatus":{"type":"integer","format":"int64"},"nomeEstagio":{"type":"string"},"statusCartaoDescricao":{"type":"string"}},"title":"CartaoDto"},"ClienteContaDto":{"type":"object","properties":{"cartoes":{"type":"array","items":{"$ref":"#/definitions/CartaoDto"}},"diaVencimento":{"type":"integer","format":"int32"},"diasAtraso":{"type":"integer","format":"int64"},"faturas":{"type":"array","items":{"$ref":"#/definitions/FaturaDto"}},"id":{"type":"integer","format":"int64"},"idProduto":{"type":"integer","format":"int32"},"idStatusConta":{"type":"integer","format":"int64"},"limiteConsumido":{"type":"number"},"limiteGlobal":{"type":"number"},"nomeProduto":{"type":"string"},"saldoDisponivelGlobal":{"type":"number"},"statusConta":{"type":"string"}},"title":"ClienteContaDto"},"ClienteDto":{"type":"object","properties":{"cnpj":{"type":"string"},"contas":{"type":"array","items":{"$ref":"#/definitions/ClienteContaDto"}},"cpf":{"type":"string"},"nome":{"type":"string"},"numeroAgencia":{"type":"integer","format":"int32"},"numeroBanco":{"type":"integer","format":"int32"},"numeroContaCorrente":{"type":"string"}},"title":"ClienteDto"},"ContaDto":{"type":"object","properties":{"dataCadastro":{"type":"string"},"dataHoraUltimaCompra":{"type":"string"},"dataStatusConta":{"type":"string"},"dataUltimaAlteracaoVencimento":{"type":"string"},"diaVencimento":{"type":"integer","format":"int32"},"diasAtraso":{"type":"integer","format":"int64"},"formaEnvioFatura":{"type":"string"},"id":{"type":"integer","format":"int64"},"idFantasiaBasica":{"type":"integer","format":"int64"},"idOrigemComercial":{"type":"integer","format":"int64"},"idPessoa":{"type":"integer","format":"int64"},"idProduto":{"type":"integer","format":"int64"},"idStatusConta":{"type":"integer","format":"int64"},"limiteGlobal":{"type":"number"},"limiteSaqueGlobal":{"type":"number"},"melhorDiaCompra":{"type":"integer","format":"int32"},"nome":{"type":"string"},"nomeFantasiaBasica":{"type":"string"},"nomeOrigemComercial":{"type":"string"},"numeroAgencia":{"type":"integer","format":"int32"},"numeroContaCorrente":{"type":"string"},"saldoDisponivelGlobal":{"type":"number"},"saldoDisponivelSaque":{"type":"number"},"statusConta":{"type":"string"},"titular":{"type":"boolean"},"valorRenda":{"type":"number"}},"title":"ContaDto"},"FaturaDto":{"type":"object","properties":{"dataVencimentoFatura":{"type":"string"},"descricaoServicoTipo":{"type":"string"},"quantidadeParcelas":{"type":"integer","format":"int32"},"situacaoProcessamento":{"type":"string"},"valorEntrada":{"type":"number"},"valorPagamentoMinimo":{"type":"number"},"valorParcela":{"type":"number"},"valorTotal":{"type":"number"},"valorTotalRefinanciamento":{"type":"number"}},"title":"FaturaDto"},"SimpleError":{"type":"object","properties":{"codigo":{"type":"string"},"detalhes":{"type":"array","items":{"$ref":"#/definitions/SimpleError"}},"mensagem":{"type":"string"},"objeto":{"type":"object"}},"title":"SimpleError"}},"schemes":["https","http"],"securityDefinitions":{"default":{"type":"oauth2","authorizationUrl":"https://10.200.5.103:8243/authorize","flow":"implicit","scopes":{}}}}
+swagger: "2.0"
+info:
+  description: "This API provides a procedural based REST compliant Micro Service Interface for the Enrolment Services micro service.  For this API, you can use the api key special-key to test the authorization filters."
+  version: "1.0"
+  title: Enrolment_Services_Micro_Service
+  license:
+    name: Copyright (c) 2014-2015 Discovery Partner Markets. All Rights Reserved.
+basePath: /vitality-enrolment-services-service
+paths:
+  "/svc/{tenant}/activateMembership":
+    post:
+      tags:
+        - Activate Membership
+      operationId: POST_ACTIVATE_MEMBERSHIP
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: activateMembershipInboundPayload
+          required: true
+          schema:
+            $ref: "#/definitions/activateMembershipInboundPayload"
+        - name: tenant
+          in: path
+          description: The tenant associated to the market.
+          required: true
+          type: integer
+          format: int32
+        - name: correlation-Id
+          in: header
+          description: A partner created identifier to identify each message.
+          required: false
+          type: string
+        - name: locale
+          in: header
+          description: Set to the Locale of the member and will be used for language determination. This must be a valid ISO639 language code.
+          required: false
+          type: string
+        - name: message-Id
+          in: header
+          description: A Vitality Group crated unique identifier to identify each message.
+          required: false
+          type: string
+        - name: session-Id
+          in: header
+          description: Identifier used to group messages together. Where the same session-Id can be used for multiple calls that belong to the same session.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/activateMembershipOutBoundPayload"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Errors"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Errors"
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: Unlimited
+  "/svc/{tenant}/batchInstructionEnrolment":
+    post:
+      tags:
+        - Batch Instruction Enrolment
+      operationId: POST_BATCH_INSTRUCTION_ENROLMENT
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: batchInstructionEnrolmentInboundPayload
+          required: true
+          schema:
+            $ref: "#/definitions/batchInstructionEnrolmentInboundPayload"
+        - name: tenant
+          in: path
+          description: The tenant associated to the market.
+          required: true
+          type: integer
+          format: int32
+        - name: correlation-Id
+          in: header
+          description: A partner created identifier to identify each message.
+          required: false
+          type: string
+        - name: locale
+          in: header
+          description: Set to the Locale of the member and will be used for language determination. This must be a valid ISO639 language code.
+          required: false
+          type: string
+        - name: message-Id
+          in: header
+          description: A Vitality Group crated unique identifier to identify each message.
+          required: false
+          type: string
+        - name: session-Id
+          in: header
+          description: Identifier used to group messages together. Where the same session-Id can be used for multiple calls that belong to the same session.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/batchInstructionEnrolmentOutBoundPayload"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Errors"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Errors"
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: Unlimited
+  "/svc/{tenant}/instructionBasedEnrolment":
+    post:
+      tags:
+        - Instruction Based Enrolment
+      operationId: POST_INSTRUCTION_BASED_ENROLMENT
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: instructionBasedEnrolmentInboundPayload
+          description: "The state of the item on the purchase - \r\nEg: One item might be dispatched and one might be pending delivery"
+          required: true
+          schema:
+            $ref: "#/definitions/instructionBasedEnrolmentInboundPayload"
+        - name: tenant
+          in: path
+          description: The tenant associated to the market.
+          required: true
+          type: integer
+          format: int32
+        - name: correlation-Id
+          in: header
+          description: A partner created identifier to identify each message.
+          required: false
+          type: string
+        - name: locale
+          in: header
+          description: Set to the Locale of the member and will be used for language determination. This must be a valid ISO639 language code.
+          required: false
+          type: string
+        - name: message-Id
+          in: header
+          description: A Vitality Group crated unique identifier to identify each message.
+          required: false
+          type: string
+        - name: session-Id
+          in: header
+          description: Identifier used to group messages together. Where the same session-Id can be used for multiple calls that belong to the same session.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/instructionBasedEnrolmentOutBoundPayload"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Errors"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Errors"
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: Unlimited
+  "/svc/{tenant}/maintainMembership":
+    post:
+      tags:
+        - Maintain Membership
+      operationId: POST_MAINTAIN_MEMBERSHIP
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: maintainMembershipInboundPayload
+          required: true
+          schema:
+            $ref: "#/definitions/maintainMembershipInboundPayload"
+        - name: tenant
+          in: path
+          description: The tenant associated to the market.
+          required: true
+          type: integer
+          format: int32
+        - name: correlation-Id
+          in: header
+          description: A partner created identifier to identify each message.
+          required: false
+          type: string
+        - name: locale
+          in: header
+          description: Set to the Locale of the member and will be used for language determination. This must be a valid ISO639 language code.
+          required: false
+          type: string
+        - name: message-Id
+          in: header
+          description: A Vitality Group crated unique identifier to identify each message.
+          required: false
+          type: string
+        - name: session-Id
+          in: header
+          description: Identifier used to group messages together. Where the same session-Id can be used for multiple calls that belong to the same session.
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/maintainMembershipOutBoundPayload"
+        "400":
+          description: Bad Request
+          schema:
+            $ref: "#/definitions/Errors"
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: "#/definitions/Errors"
+      x-auth-type: "Application & Application User"
+      x-throttling-tier: Unlimited
+definitions:
+  ErrorDetail:
+    properties:
+      code:
+        type: integer
+        format: int32
+      context:
+        type: string
+      message:
+        type: string
+      type:
+        type: string
+  Errors:
+    properties:
+      errors:
+        type: array
+        items:
+          $ref: "#/definitions/ErrorDetail"
+  activateMembershipInboundPayload:
+    properties:
+      activateVitalityMembershipRequest:
+        $ref: "#/definitions/activateVitalityMembershipRequestActivateMembershipInboundUnder"
+  activateMembershipOutBoundPayload:
+    properties:
+      partyRoleOuts:
+        $ref: "#/definitions/partyRoleOutsActivateMembershipOutboundList"
+      vitalityMembership:
+        $ref: "#/definitions/vitalityMembershipActivateMembershipOutboundUnder"
+  activateVitalityMembershipBatchInstructionEnrolmentInboundUnder:
+    required:
+      - effectivePeriod
+      - product
+    properties:
+      effectivePeriod:
+        $ref: "#/definitions/effectivePeriodBatchInstructionEnrolmentInbound_isRequired_"
+      externalMembershipIdentification:
+        $ref: "#/definitions/externalMembershipIdentificationBatchInstructionEnrolmentInbound"
+      membershipReferences:
+        $ref: "#/definitions/membershipReferencesBatchInstructionEnrolmentInboundList"
+      partyRoles:
+        $ref: "#/definitions/partyRolesBatchInstructionEnrolmentInboundList"
+      product:
+        $ref: "#/definitions/productBatchInstructionEnrolmentInbound_isRequired_"
+  activateVitalityMembershipInstructionBasedEnrolmentInboundUnder:
+    required:
+      - effectivePeriod
+      - product
+    properties:
+      effectivePeriod:
+        $ref: "#/definitions/effectivePeriodInstructionBasedEnrolmentInbound_isRequired_"
+      externalMembershipIdentification:
+        $ref: "#/definitions/externalMembershipIdentificationInstructionBasedEnrolmentInbound"
+      membershipReferences:
+        $ref: "#/definitions/membershipReferencesInstructionBasedEnrolmentInboundList"
+      partyRoles:
+        $ref: "#/definitions/partyRolesInstructionBasedEnrolmentInboundList"
+      product:
+        $ref: "#/definitions/productInstructionBasedEnrolmentInbound_isRequired_"
+  activateVitalityMembershipOutBatchInstructionEnrolmentOutboundUnder:
+    properties:
+      membershipReferences:
+        $ref: "#/definitions/membershipReferencesBatchInstructionEnrolmentOutboundList"
+      partyRoleOuts:
+        $ref: "#/definitions/partyRoleOutsBatchInstructionEnrolmentOutboundList"
+      vitalityMemebrshipId:
+        type: integer
+        format: int64
+        description: "<font color=\"#323232\">An Id that uniquely identifies the Vitality Membership</font>"
+  activateVitalityMembershipRequestActivateMembershipInboundUnder:
+    required:
+      - effectivePeriod
+      - product
+    properties:
+      effectivePeriod:
+        $ref: "#/definitions/effectivePeriodActivateMembershipInbound_isRequired_"
+      externalMembershipIdentification:
+        $ref: "#/definitions/externalMembershipIdentificationActivateMembershipInbound"
+      membershipReferences:
+        $ref: "#/definitions/membershipReferencesActivateMembershipInboundList"
+      partyRoles:
+        $ref: "#/definitions/partyRolesActivateMembershipInboundList"
+      product:
+        $ref: "#/definitions/productActivateMembershipInbound_isRequired_"
+  batchInstructionEnrolmentInboundPayload:
+    properties:
+      activateVitalityMembership:
+        $ref: "#/definitions/activateVitalityMembershipBatchInstructionEnrolmentInboundUnder"
+      maintainPartyRequest:
+        $ref: "#/definitions/maintainPartyRequestBatchInstructionEnrolmentInboundUnder"
+      maintainVitalityMembership:
+        $ref: "#/definitions/maintainVitalityMembershipBatchInstructionEnrolmentInboundUnder"
+      requestHeader:
+        $ref: "#/definitions/requestHeaderBatchInstructionEnrolmentInboundUnder"
+  batchInstructionEnrolmentOutBoundPayload:
+    properties:
+      activateVitalityMembershipOut:
+        $ref: "#/definitions/activateVitalityMembershipOutBatchInstructionEnrolmentOutboundUnder"
+      errorList:
+        $ref: "#/definitions/errorListBatchInstructionEnrolmentOutboundUnder"
+      maintainPartyResponse:
+        $ref: "#/definitions/maintainPartyResponseBatchInstructionEnrolmentOutboundUnder"
+      maintainVitalityMembershipOut:
+        $ref: "#/definitions/maintainVitalityMembershipOutBatchInstructionEnrolmentOutboundUnder"
+      responseHeader:
+        $ref: "#/definitions/responseHeaderBatchInstructionEnrolmentOutboundUnder"
+  cancelMembershipBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The date to cancel the Vitality Membership from.\r\nThis results in a new Canceled state on the membership"
+      reason:
+        type: string
+        description: An instruction to cancel a Vitality Membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel a Vitality Membership
+  cancelMembershipInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The date to cancel the Vitality Membership from.\r\nThis results in a new Canceled state on the membership"
+      reason:
+        type: string
+        description: An instruction to cancel a Vitality Membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel a Vitality Membership
+  cancelVitalityMembershipMaintainMembershipInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The date to cancel the Vitality Membership from.\r\nThis results in a new Canceled state on the membership"
+      reason:
+        type: string
+        description: An instruction to cancel a Vitality Membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel a Vitality Membership
+  cancelVitalityMembershipToInceptionBatchInstructionEnrolmentInbound:
+    required:
+      - vitalityMembershipId
+    properties:
+      reason:
+        type: string
+        description: "Reason for cancelling the Vitality Membership\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel an entire Vitality Membership. This will result in no active states throughout the lifecycle of the Vitality Membership
+  cancelVitalityMembershipToInceptionInstructionBasedEnrolmentInbound:
+    required:
+      - vitalityMembershipId
+    properties:
+      reason:
+        type: string
+        description: "Reason for cancelling the Vitality Membership\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel an entire Vitality Membership. This will result in no active states throughout the lifecycle of the Vitality Membership
+  cancelVitalityMembershipToInceptionMaintainMembershipInbound:
+    required:
+      - vitalityMembershipId
+    properties:
+      reason:
+        type: string
+        description: "Reason for cancelling the Vitality Membership\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to cancel an entire Vitality Membership. This will result in no active states throughout the lifecycle of the Vitality Membership
+  changeMembershipStartDateBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: The new effective date of the commencement of the agreement
+      product:
+        $ref: "#/definitions/productBatchInstructionEnrolmentInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the start date of a Vitality membership earlier or later
+  changeMembershipStartDateInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: The new effective date of the commencement of the agreement
+      product:
+        $ref: "#/definitions/productInstructionBasedEnrolmentInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the start date of a Vitality membership earlier or later
+  changeMembershipStartDateMaintainMembershipInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: The new effective date of the commencement of the agreement
+      product:
+        $ref: "#/definitions/productMaintainMembershipInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the start date of a Vitality membership earlier or later
+  contactPurposeActivateMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role purpose in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - points statement notification or campaign management</li>\r\n\t<li><b>web address</b>: example - social network engagement</li>\r\n\t<li><b>telephone number</b>: example - member servicing calls or technical support calls</li>\r\n\t<li><b>physical address</b>: example -  billing notification or product update notification</li>\r\n</ul>"
+  contactPurposeBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role purpose in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - points statement notification or campaign management</li>\r\n\t<li><b>web address</b>: example - social network engagement</li>\r\n\t<li><b>telephone number</b>: example - member servicing calls or technical support calls</li>\r\n\t<li><b>physical address</b>: example -  billing notification or product update notification</li>\r\n</ul>"
+  contactPurposeInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role purpose in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - points statement notification or campaign management</li>\r\n\t<li><b>web address</b>: example - social network engagement</li>\r\n\t<li><b>telephone number</b>: example - member servicing calls or technical support calls</li>\r\n\t<li><b>physical address</b>: example -  billing notification or product update notification</li>\r\n</ul>"
+  contactPurposeMaintainMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role purpose in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - points statement notification or campaign management</li>\r\n\t<li><b>web address</b>: example - social network engagement</li>\r\n\t<li><b>telephone number</b>: example - member servicing calls or technical support calls</li>\r\n\t<li><b>physical address</b>: example -  billing notification or product update notification</li>\r\n</ul>"
+  contactPurposesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactPurposeActivateMembershipInbound"
+  contactPurposesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactPurposeBatchInstructionEnrolmentInbound"
+  contactPurposesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactPurposeInstructionBasedEnrolmentInbound"
+  contactPurposesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactPurposeMaintainMembershipInbound"
+  contactRoleActivateMembershipInbound:
+    properties:
+      availabilityFrom:
+        type: string
+        description: The start time from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      availabilityTo:
+        type: string
+        description: The end time from which the specific contact mechanism may not be used for contact purposes in relation to the contact mechanism role type it is associated with
+      contactPurposes:
+        $ref: "#/definitions/contactPurposesActivateMembershipInboundList"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      effectiveTo:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may no longer be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      roleId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - personal or work email</li>\r\n\t<li><b>web address</b>: example - blog or twitter</li>\r\n\t<li><b>telephone number</b>: example - home, work, daytime, after hours, emergency</li>\r\n\t<li><b>physical address</b>: example -  home,  work, delivery</li>\r\n</ul>\r\n\r\n"
+  contactRoleBatchInstructionEnrolmentInbound:
+    properties:
+      availabilityFrom:
+        type: string
+        description: The start time from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      availabilityTo:
+        type: string
+        description: The end time from which the specific contact mechanism may not be used for contact purposes in relation to the contact mechanism role type it is associated with
+      contactPurposes:
+        $ref: "#/definitions/contactPurposesBatchInstructionEnrolmentInboundList"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      effectiveTo:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may no longer be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      roleId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - personal or work email</li>\r\n\t<li><b>web address</b>: example - blog or twitter</li>\r\n\t<li><b>telephone number</b>: example - home, work, daytime, after hours, emergency</li>\r\n\t<li><b>physical address</b>: example -  home,  work, delivery</li>\r\n</ul>\r\n\r\n"
+  contactRoleInstructionBasedEnrolmentInbound:
+    properties:
+      availabilityFrom:
+        type: string
+        description: The start time from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      availabilityTo:
+        type: string
+        description: The end time from which the specific contact mechanism may not be used for contact purposes in relation to the contact mechanism role type it is associated with
+      contactPurposes:
+        $ref: "#/definitions/contactPurposesInstructionBasedEnrolmentInboundList"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      effectiveTo:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may no longer be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      roleId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - personal or work email</li>\r\n\t<li><b>web address</b>: example - blog or twitter</li>\r\n\t<li><b>telephone number</b>: example - home, work, daytime, after hours, emergency</li>\r\n\t<li><b>physical address</b>: example -  home,  work, delivery</li>\r\n</ul>\r\n\r\n"
+  contactRoleMaintainMembershipInbound:
+    properties:
+      availabilityFrom:
+        type: string
+        description: The start time from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      availabilityTo:
+        type: string
+        description: The end time from which the specific contact mechanism may not be used for contact purposes in relation to the contact mechanism role type it is associated with
+      contactPurposes:
+        $ref: "#/definitions/contactPurposesMaintainMembershipInboundList"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      effectiveTo:
+        type: string
+        format: date
+        description: The date from which the specific contact mechanism may no longer be used  for contact purposes in relation to the contact mechanism role type it is associated with
+      roleId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: "The unique global key that represents a type of role in terms of the following contact mechanisms\r\n<ul>\r\n\t<li><b>email</b> <b>address</b>: example - personal or work email</li>\r\n\t<li><b>web address</b>: example - blog or twitter</li>\r\n\t<li><b>telephone number</b>: example - home, work, daytime, after hours, emergency</li>\r\n\t<li><b>physical address</b>: example -  home,  work, delivery</li>\r\n</ul>\r\n\r\n"
+  contactRolesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactRoleActivateMembershipInbound"
+  contactRolesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactRoleBatchInstructionEnrolmentInbound"
+  contactRolesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactRoleInstructionBasedEnrolmentInbound"
+  contactRolesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/contactRoleMaintainMembershipInbound"
+  effectivePeriodActivateMembershipInbound_isRequired_:
+    required:
+      - effectiveFrom
+      - effectiveTo
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The starting date of the effective period. This date is inclusive\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The end date of the effective period. This date is inclusive\r\n"
+    description: The effective period to be used to activate the Vitality Membership
+  effectivePeriodBatchInstructionEnrolmentInbound_isRequired_:
+    required:
+      - effectiveFrom
+      - effectiveTo
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The starting date of the effective period. This date is inclusive\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The end date of the effective period. This date is inclusive\r\n"
+    description: The effective period to be used to activate the Vitality Membership
+  effectivePeriodInstructionBasedEnrolmentInbound_isRequired_:
+    required:
+      - effectiveFrom
+      - effectiveTo
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The starting date of the effective period. This date is inclusive\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The end date of the effective period. This date is inclusive\r\n"
+    description: The effective period to be used to activate the Vitality Membership
+  emailAddressActivateMembershipInbound:
+    required:
+      - value
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesActivateMembershipInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      value:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+  emailAddressBatchInstructionEnrolmentInbound:
+    required:
+      - value
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesBatchInstructionEnrolmentInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      value:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+  emailAddressInstructionBasedEnrolmentInbound:
+    required:
+      - value
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesInstructionBasedEnrolmentInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      value:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+  emailAddressMaintainMembershipInbound:
+    required:
+      - value
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesMaintainMembershipInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      value:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+  emailAddressesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/emailAddressActivateMembershipInbound"
+  emailAddressesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/emailAddressBatchInstructionEnrolmentInbound"
+  emailAddressesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/emailAddressInstructionBasedEnrolmentInbound"
+  emailAddressesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/emailAddressMaintainMembershipInbound"
+  errorCodeBatchInstructionEnrolmentOutbound:
+    required:
+      - errorCode
+      - errorDescription
+    properties:
+      errorCode:
+        type: integer
+        format: int32
+        description: "<font color=\"#323232\">A numeric number representing the error</font>"
+      errorDescription:
+        type: string
+        description: "<font color=\"#323232\">Description of the error</font>"
+  errorCodesBatchInstructionEnrolmentOutboundList:
+    type: array
+    items:
+      $ref: "#/definitions/errorCodeBatchInstructionEnrolmentOutbound"
+  errorListBatchInstructionEnrolmentOutboundUnder:
+    properties:
+      errorCodes:
+        $ref: "#/definitions/errorCodesBatchInstructionEnrolmentOutboundList"
+  extendMembershipBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The new EffectiveTo date of the Vitality Membership\r\n"
+      product:
+        $ref: "#/definitions/productBatchInstructionEnrolmentInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to move the end date of an active Vitality membership to a later date
+  extendMembershipInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The new EffectiveTo date of the Vitality Membership\r\n"
+      product:
+        $ref: "#/definitions/productInstructionBasedEnrolmentInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to move the end date of an active Vitality membership to a later date
+  extendMembershipMaintainMembershipInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: "The new EffectiveTo date of the Vitality Membership\r\n"
+      product:
+        $ref: "#/definitions/productMaintainMembershipInbound"
+      reason:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to move the end date of an active Vitality membership to a later date
+  externalMembershipIdentificationActivateMembershipInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: Reference type
+      value:
+        type: string
+        description: "Value associated with the reference\r\n"
+    description: Reference that is used to uniquely identify the Vitality Membership
+  externalMembershipIdentificationBatchInstructionEnrolmentInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: Reference type
+      value:
+        type: string
+        description: "Value associated with the reference\r\n"
+    description: Reference that is used to uniquely identify the Vitality Membership
+  externalMembershipIdentificationInstructionBasedEnrolmentInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: Reference type
+      value:
+        type: string
+        description: "Value associated with the reference\r\n"
+    description: Reference that is used to uniquely identify the Vitality Membership
+  externalPartyIdentificationActivateMembershipInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: "Type of the reference "
+      value:
+        type: string
+        description: Value of the reference
+    description: External party reference that is used to uniquely identify the party
+  externalPartyIdentificationBatchInstructionEnrolmentInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: "Type of the reference "
+      value:
+        type: string
+        description: Value of the reference
+    description: External party reference that is used to uniquely identify the party
+  externalPartyIdentificationInstructionBasedEnrolmentInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: "Type of the reference "
+      value:
+        type: string
+        description: Value of the reference
+    description: External party reference that is used to uniquely identify the party
+  externalPartyIdentificationMaintainMembershipInbound:
+    required:
+      - referenceTypeKey
+      - value
+    properties:
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: "Type of the reference "
+      value:
+        type: string
+        description: Value of the reference
+    description: External party reference that is used to uniquely identify the party
+  generalPreferenceActivateMembershipInbound:
+    required:
+      - typeKey
+      - value
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The effective from-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The effective to-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that is set for the party preference \r\n"
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+  generalPreferenceBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+      - value
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The effective from-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The effective to-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that is set for the party preference \r\n"
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+  generalPreferenceInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+      - value
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The effective from-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The effective to-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that is set for the party preference \r\n"
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+  generalPreferenceMaintainMembershipInbound:
+    required:
+      - typeKey
+      - value
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: "The effective from-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "The effective to-date that the party preference is effective\r\n\r\ni.e. 12/11/2016\r\n"
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that is set for the party preference \r\n"
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+  generalPreferencesActivateMembershipInboundList:
+    type: array
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+    items:
+      $ref: "#/definitions/generalPreferenceActivateMembershipInbound"
+  generalPreferencesBatchInstructionEnrolmentInboundList:
+    type: array
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+    items:
+      $ref: "#/definitions/generalPreferenceBatchInstructionEnrolmentInbound"
+  generalPreferencesInstructionBasedEnrolmentInboundList:
+    type: array
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+    items:
+      $ref: "#/definitions/generalPreferenceInstructionBasedEnrolmentInbound"
+  generalPreferencesMaintainMembershipInboundList:
+    type: array
+    description: "This is the preference associated to the party.\r\n\r\ni.e. Diet - Vegeterian"
+    items:
+      $ref: "#/definitions/generalPreferenceMaintainMembershipInbound"
+  geographicalAreaPreferenceActivateMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  geographicalAreaPreferenceBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  geographicalAreaPreferenceInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  geographicalAreaPreferenceMaintainMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  instructionBasedEnrolmentInboundPayload:
+    required:
+      - instructionTypeKey
+    properties:
+      activateVitalityMembership:
+        $ref: "#/definitions/activateVitalityMembershipInstructionBasedEnrolmentInboundUnder"
+      instructionTypeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      maintainPartyRequest:
+        $ref: "#/definitions/maintainPartyRequestInstructionBasedEnrolmentInboundUnder"
+      maintainVitalityMembership:
+        $ref: "#/definitions/maintainVitalityMembershipInstructionBasedEnrolmentInboundUnder"
+  instructionBasedEnrolmentOutBoundPayload:
+    properties:
+      party:
+        $ref: "#/definitions/partyInstructionBasedEnrolmentOutboundUnder"
+      partyRoleOuts:
+        $ref: "#/definitions/partyRoleOutsInstructionBasedEnrolmentOutboundList"
+      vitalityMembership:
+        $ref: "#/definitions/vitalityMembershipInstructionBasedEnrolmentOutboundUnder"
+  languagePreferenceActivateMembershipInbound:
+    properties:
+      iSOCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  languagePreferenceBatchInstructionEnrolmentInbound:
+    properties:
+      iSOCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  languagePreferenceInstructionBasedEnrolmentInbound:
+    properties:
+      iSOCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  languagePreferenceMaintainMembershipInbound:
+    properties:
+      iSOCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  maintainMembershipInboundPayload:
+    properties:
+      mantainVitalityMembershipRequest:
+        $ref: "#/definitions/mantainVitalityMembershipRequestMaintainMembershipInboundUnder"
+  maintainMembershipOutBoundPayload:
+    properties:
+      mantainVitalityMembershipResponse:
+        $ref: "#/definitions/mantainVitalityMembershipResponseMaintainMembershipOutboundUnder"
+  maintainPartyRequestBatchInstructionEnrolmentInboundUnder:
+    required:
+      - party
+    properties:
+      action:
+        type: string
+        description: "CREATE action for parties to be created\r\nUPDATE action for parties to be updated"
+      party:
+        $ref: "#/definitions/partyBatchInstructionEnrolmentInbound_isRequired_"
+  maintainPartyRequestInstructionBasedEnrolmentInboundUnder:
+    required:
+      - party
+    properties:
+      action:
+        type: string
+        description: "CREATE action for parties to be created\r\nUPDATE action for parties to be updated"
+      party:
+        $ref: "#/definitions/partyInstructionBasedEnrolmentInbound_isRequired_"
+  maintainPartyResponseBatchInstructionEnrolmentOutboundUnder:
+    properties:
+      parties:
+        $ref: "#/definitions/partiesBatchInstructionEnrolmentOutboundList"
+  maintainVitalityMembershipBatchInstructionEnrolmentInboundUnder:
+    properties:
+      cancelMembership:
+        $ref: "#/definitions/cancelMembershipBatchInstructionEnrolmentInbound"
+      cancelVitalityMembershipToInception:
+        $ref: "#/definitions/cancelVitalityMembershipToInceptionBatchInstructionEnrolmentInbound"
+      changeMembershipStartDate:
+        $ref: "#/definitions/changeMembershipStartDateBatchInstructionEnrolmentInbound"
+      extendMembership:
+        $ref: "#/definitions/extendMembershipBatchInstructionEnrolmentInbound"
+      reinstateVitalityMembership:
+        $ref: "#/definitions/reinstateVitalityMembershipBatchInstructionEnrolmentInbound"
+      updateMembershipProduct:
+        $ref: "#/definitions/updateMembershipProductBatchInstructionEnrolmentInbound"
+      updateMembershipRoles:
+        $ref: "#/definitions/updateMembershipRolesBatchInstructionEnrolmentInboundList"
+  maintainVitalityMembershipInstructionBasedEnrolmentInboundUnder:
+    properties:
+      cancelMembership:
+        $ref: "#/definitions/cancelMembershipInstructionBasedEnrolmentInbound"
+      cancelVitalityMembershipToInception:
+        $ref: "#/definitions/cancelVitalityMembershipToInceptionInstructionBasedEnrolmentInbound"
+      changeMembershipStartDate:
+        $ref: "#/definitions/changeMembershipStartDateInstructionBasedEnrolmentInbound"
+      extendMembership:
+        $ref: "#/definitions/extendMembershipInstructionBasedEnrolmentInbound"
+      reinstateVitalityMembership:
+        $ref: "#/definitions/reinstateVitalityMembershipInstructionBasedEnrolmentInbound"
+      updateMembershipProduct:
+        $ref: "#/definitions/updateMembershipProductInstructionBasedEnrolmentInbound"
+      updateMembershipReference:
+        $ref: "#/definitions/updateMembershipReferenceInstructionBasedEnrolmentInbound"
+      updateMembershipRoles:
+        $ref: "#/definitions/updateMembershipRolesInstructionBasedEnrolmentInboundList"
+  maintainVitalityMembershipOutBatchInstructionEnrolmentOutboundUnder:
+    required:
+      - vitalityMemebrshipId
+    properties:
+      membershipReferences:
+        $ref: "#/definitions/membershipReferencesBatchInstructionEnrolmentOutboundList"
+      partyRoleOuts:
+        $ref: "#/definitions/partyRoleOutsBatchInstructionEnrolmentOutboundList"
+      vitalityMemebrshipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+  mantainVitalityMembershipRequestMaintainMembershipInboundUnder:
+    properties:
+      cancelVitalityMembership:
+        $ref: "#/definitions/cancelVitalityMembershipMaintainMembershipInbound"
+      cancelVitalityMembershipToInception:
+        $ref: "#/definitions/cancelVitalityMembershipToInceptionMaintainMembershipInbound"
+      changeMembershipStartDate:
+        $ref: "#/definitions/changeMembershipStartDateMaintainMembershipInbound"
+      extendMembership:
+        $ref: "#/definitions/extendMembershipMaintainMembershipInbound"
+      reinstateVitalityMembership:
+        $ref: "#/definitions/reinstateVitalityMembershipMaintainMembershipInbound"
+      updateMembershipProduct:
+        $ref: "#/definitions/updateMembershipProductMaintainMembershipInbound"
+      updateMembershipReferences:
+        $ref: "#/definitions/updateMembershipReferencesMaintainMembershipInboundList"
+      updateMembershipRoles:
+        $ref: "#/definitions/updateMembershipRolesMaintainMembershipInboundList"
+  mantainVitalityMembershipResponseMaintainMembershipOutboundUnder:
+    properties:
+      partyRoleOuts:
+        $ref: "#/definitions/partyRoleOutsMaintainMembershipOutboundList"
+      vitalityMembership:
+        $ref: "#/definitions/vitalityMembershipMaintainMembershipOutbound"
+  measurementSystemPreferenceActivateMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+  measurementSystemPreferenceBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+  measurementSystemPreferenceInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+  measurementSystemPreferenceMaintainMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+  membershipReferenceActivateMembershipInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "This describes the type of identifier. E.g. This could be passport, identification number, identification document, company registration number"
+      uniqueIdentifier:
+        type: boolean
+        description: "Identifies whether the membership reference being captured is to be treated as the reference to uniquely identify the member. This number will be saved against the agreement "
+      value:
+        type: string
+        description: "This is used as a reference indicator. This is the actual value related to the Identity type. For example, the ID number 7012165267086 is the actual value related to the South African ID type.\r\n\r\ni.e.\r\n\r\n16 Dec 1970 \r\nnull\r\n7012165267086\r\nZA-ID"
+    description: External reference that is used to identify the party
+  membershipReferenceBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "This describes the type of identifier. E.g. This could be passport, identification number, identification document, company registration number"
+      uniqueIdentifier:
+        type: boolean
+        description: "Identifies whether the membership reference being captured is to be treated as the reference to uniquely identify the member. This number will be saved against the agreement "
+      value:
+        type: string
+        description: "This is used as a reference indicator. This is the actual value related to the Identity type. For example, the ID number 7012165267086 is the actual value related to the South African ID type.\r\n\r\ni.e.\r\n\r\n16 Dec 1970 \r\nnull\r\n7012165267086\r\nZA-ID"
+    description: External reference that is used to identify the party
+  membershipReferenceBatchInstructionEnrolmentOutbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "This describes the type of identifier. E.g. This could be passport, identification number, identification document, company registration number"
+      uniqueIdentifier:
+        type: boolean
+        description: "Identifies whether the membership reference being captured is to be treated as the reference to uniquely identify the member. This number will be saved against the agreement "
+      value:
+        type: string
+        description: "This is used as a reference indicator. This is the actual value related to the Identity type. For example, the ID number 7012165267086 is the actual value related to the South African ID type.\r\n\r\ni.e.\r\n\r\n16 Dec 1970 \r\nnull\r\n7012165267086\r\nZA-ID"
+    description: External reference that is used to identify the party
+  membershipReferenceInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      typeKey:
+        type: integer
+        format: int64
+        description: "This describes the type of identifier. E.g. This could be passport, identification number, identification document, company registration number"
+      uniqueIdentifier:
+        type: boolean
+        description: "Identifies whether the membership reference being captured is to be treated as the reference to uniquely identify the member. This number will be saved against the agreement "
+      value:
+        type: string
+        description: "This is used as a reference indicator. This is the actual value related to the Identity type. For example, the ID number 7012165267086 is the actual value related to the South African ID type.\r\n\r\ni.e.\r\n\r\n16 Dec 1970 \r\nnull\r\n7012165267086\r\nZA-ID"
+    description: External reference that is used to identify the party
+  membershipReferencesActivateMembershipInboundList:
+    type: array
+    description: External reference that is used to identify the party
+    items:
+      $ref: "#/definitions/membershipReferenceActivateMembershipInbound"
+  membershipReferencesBatchInstructionEnrolmentInboundList:
+    type: array
+    description: External reference that is used to identify the party
+    items:
+      $ref: "#/definitions/membershipReferenceBatchInstructionEnrolmentInbound"
+  membershipReferencesBatchInstructionEnrolmentOutboundList:
+    type: array
+    description: External reference that is used to identify the party
+    items:
+      $ref: "#/definitions/membershipReferenceBatchInstructionEnrolmentOutbound"
+  membershipReferencesInstructionBasedEnrolmentInboundList:
+    type: array
+    description: External reference that is used to identify the party
+    items:
+      $ref: "#/definitions/membershipReferenceInstructionBasedEnrolmentInbound"
+  organisationBatchInstructionEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      name:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+      registeredDate:
+        type: string
+        format: date
+      shortName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+      suffix:
+        type: string
+      tradingAs:
+        type: string
+      typeKey:
+        type: integer
+        format: int64
+        description: "An identifier associated with the value of the OrganisationType.\r\n"
+  organisationInstructionBasedEnrolmentInbound:
+    required:
+      - typeKey
+    properties:
+      name:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+      registeredDate:
+        type: string
+        format: date
+      shortName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+      suffix:
+        type: string
+      tradingAs:
+        type: string
+      typeKey:
+        type: integer
+        format: int64
+        description: "An identifier associated with the value of the OrganisationType.\r\n"
+  partiesBatchInstructionEnrolmentOutboundList:
+    type: array
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+    items:
+      $ref: "#/definitions/partyBatchInstructionEnrolmentOutbound"
+  partyAssociationCreateActivateMembershipInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - partyAssociationRoleKey
+    properties:
+      associationName:
+        type: string
+        description: "This is the name of the \"Association\" that an enrolled party is to be associated with.\r\nThe \"Association\" name will be translated into a party id at the highest level service for enrolment "
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      partyAssociationRoleKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      partyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+  partyAssociationCreateInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - partyAssociationRoleKey
+    properties:
+      associationName:
+        type: string
+        description: "This is the name of the \"Association\" that an enrolled party is to be associated with.\r\nThe \"Association\" name will be translated into a party id at the highest level service for enrolment "
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      partyAssociationRoleKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      partyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+  partyAssociationCreatesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyAssociationCreateActivateMembershipInbound"
+  partyAssociationCreatesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyAssociationCreateInstructionBasedEnrolmentInbound"
+  partyAssociationsBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - partyAssociationRoleKey
+    properties:
+      associationName:
+        type: string
+        description: "This is the name of the \"Association\" that an enrolled party is to be associated with.\r\nThe \"Association\" name will be translated into a party id at the highest level service for enrolment "
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      partyAssociationRoleKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      partyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      referenceTypeKey:
+        type: integer
+        format: int64
+        description: The resolver reference type key
+  partyAssociationsBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyAssociationsBatchInstructionEnrolmentInbound"
+  partyBatchInstructionEnrolmentInbound_isRequired_:
+    properties:
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesBatchInstructionEnrolmentInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationBatchInstructionEnrolmentInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesBatchInstructionEnrolmentInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceBatchInstructionEnrolmentInbound"
+      id:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceBatchInstructionEnrolmentInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceBatchInstructionEnrolmentInbound"
+      organisation:
+        $ref: "#/definitions/organisationBatchInstructionEnrolmentInbound"
+      partyAssociations:
+        $ref: "#/definitions/partyAssociationsBatchInstructionEnrolmentInboundList"
+      person:
+        $ref: "#/definitions/personBatchInstructionEnrolmentInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesBatchInstructionEnrolmentInboundList"
+      references:
+        $ref: "#/definitions/referencesBatchInstructionEnrolmentInboundList"
+      telephones:
+        $ref: "#/definitions/telephonesBatchInstructionEnrolmentInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceBatchInstructionEnrolmentInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialBatchInstructionEnrolmentInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesBatchInstructionEnrolmentInboundList"
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+  partyBatchInstructionEnrolmentOutbound:
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+  partyInstructionBasedEnrolmentInbound_isRequired_:
+    properties:
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesInstructionBasedEnrolmentInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationInstructionBasedEnrolmentInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesInstructionBasedEnrolmentInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceInstructionBasedEnrolmentInbound"
+      id:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceInstructionBasedEnrolmentInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceInstructionBasedEnrolmentInbound"
+      organisation:
+        $ref: "#/definitions/organisationInstructionBasedEnrolmentInbound"
+      partyAssociationCreates:
+        $ref: "#/definitions/partyAssociationCreatesInstructionBasedEnrolmentInboundList"
+      person:
+        $ref: "#/definitions/personInstructionBasedEnrolmentInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesInstructionBasedEnrolmentInboundList"
+      references:
+        $ref: "#/definitions/referencesInstructionBasedEnrolmentInboundList"
+      telephones:
+        $ref: "#/definitions/telephonesInstructionBasedEnrolmentInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceInstructionBasedEnrolmentInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialInstructionBasedEnrolmentInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesInstructionBasedEnrolmentInboundList"
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+  partyInstructionBasedEnrolmentOutboundUnder:
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+  partyRoleActivateMembershipInbound_isRequired_:
+    required:
+      - roleTypeKey
+    properties:
+      action:
+        type: string
+        description: "If party id not present then party details are submitted along with the action \"CREATE\"\r\n\r\nCREATE action only.\r\nParty Role only to be used to create new parties not on membership. Any existing parties should have the id's populated\r\n"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The effective date the party role valid from
+      effectiveTo:
+        type: string
+        format: date
+        description: Date in which party role is valid to.i.e validity end date
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesActivateMembershipInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationActivateMembershipInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesActivateMembershipInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceActivateMembershipInbound"
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceActivateMembershipInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceActivateMembershipInbound"
+      partyAssociationCreates:
+        $ref: "#/definitions/partyAssociationCreatesActivateMembershipInboundList"
+      partyId:
+        type: integer
+        format: int64
+        description: The party identifier representing the individual logged in
+      person:
+        $ref: "#/definitions/personActivateMembershipInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesActivateMembershipInboundList"
+      references:
+        $ref: "#/definitions/referencesActivateMembershipInboundList"
+      roleTypeKey:
+        type: integer
+        format: int64
+        description: The role in which the party engages in respect of the Vitality membership
+      telephones:
+        $ref: "#/definitions/telephonesActivateMembershipInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceActivateMembershipInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialActivateMembershipInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesActivateMembershipInboundList"
+  partyRoleBatchInstructionEnrolmentInbound_isRequired_:
+    required:
+      - roleTypeKey
+    properties:
+      action:
+        type: string
+        description: "If party id not present then party details are submitted along with the action \"CREATE\"\r\n\r\nCREATE action only.\r\nParty Role only to be used to create new parties not on membership. Any existing parties should have the id's populated\r\n"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The effective date the party role valid from
+      effectiveTo:
+        type: string
+        format: date
+        description: Date in which party role is valid to.i.e validity end date
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesBatchInstructionEnrolmentInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationBatchInstructionEnrolmentInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesBatchInstructionEnrolmentInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceBatchInstructionEnrolmentInbound"
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceBatchInstructionEnrolmentInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceBatchInstructionEnrolmentInbound"
+      organisation:
+        $ref: "#/definitions/organisationBatchInstructionEnrolmentInbound"
+      partyAssociations:
+        $ref: "#/definitions/partyAssociationsBatchInstructionEnrolmentInboundList"
+      partyId:
+        type: integer
+        format: int64
+        description: The party identifier representing the individual logged in
+      person:
+        $ref: "#/definitions/personBatchInstructionEnrolmentInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesBatchInstructionEnrolmentInboundList"
+      references:
+        $ref: "#/definitions/referencesBatchInstructionEnrolmentInboundList"
+      roleTypeKey:
+        type: integer
+        format: int64
+        description: The role in which the party engages in respect of the Vitality membership
+      telephones:
+        $ref: "#/definitions/telephonesBatchInstructionEnrolmentInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceBatchInstructionEnrolmentInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialBatchInstructionEnrolmentInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesBatchInstructionEnrolmentInboundList"
+  partyRoleInstructionBasedEnrolmentInbound_isRequired_:
+    required:
+      - roleTypeKey
+    properties:
+      action:
+        type: string
+        description: "If party id not present then party details are submitted along with the action \"CREATE\"\r\n\r\nCREATE action only.\r\nParty Role only to be used to create new parties not on membership. Any existing parties should have the id's populated\r\n"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The effective date the party role valid from
+      effectiveTo:
+        type: string
+        format: date
+        description: Date in which party role is valid to.i.e validity end date
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesInstructionBasedEnrolmentInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationInstructionBasedEnrolmentInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesInstructionBasedEnrolmentInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceInstructionBasedEnrolmentInbound"
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceInstructionBasedEnrolmentInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceInstructionBasedEnrolmentInbound"
+      organisation:
+        $ref: "#/definitions/organisationInstructionBasedEnrolmentInbound"
+      partyAssociationCreates:
+        $ref: "#/definitions/partyAssociationCreatesInstructionBasedEnrolmentInboundList"
+      partyId:
+        type: integer
+        format: int64
+        description: The party identifier representing the individual logged in
+      person:
+        $ref: "#/definitions/personInstructionBasedEnrolmentInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesInstructionBasedEnrolmentInboundList"
+      references:
+        $ref: "#/definitions/referencesInstructionBasedEnrolmentInboundList"
+      roleTypeKey:
+        type: integer
+        format: int64
+        description: The role in which the party engages in respect of the Vitality membership
+      telephones:
+        $ref: "#/definitions/telephonesInstructionBasedEnrolmentInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceInstructionBasedEnrolmentInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialInstructionBasedEnrolmentInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesInstructionBasedEnrolmentInboundList"
+  partyRoleMaintainMembershipInbound_isRequired_:
+    required:
+      - roleTypeKey
+    properties:
+      action:
+        type: string
+        description: "If party id not present then party details are submitted along with the action \"CREATE\"\r\n\r\nCREATE action only.\r\nParty Role only to be used to create new parties not on membership. Any existing parties should have the id's populated\r\n"
+      effectiveFrom:
+        type: string
+        format: date
+        description: The effective date the party role valid from
+      effectiveTo:
+        type: string
+        format: date
+        description: Date in which party role is valid to.i.e validity end date
+      emailAddresses:
+        $ref: "#/definitions/emailAddressesMaintainMembershipInboundList"
+      externalPartyIdentification:
+        $ref: "#/definitions/externalPartyIdentificationMaintainMembershipInbound"
+      generalPreferences:
+        $ref: "#/definitions/generalPreferencesMaintainMembershipInboundList"
+      geographicalAreaPreference:
+        $ref: "#/definitions/geographicalAreaPreferenceMaintainMembershipInbound"
+      languagePreference:
+        $ref: "#/definitions/languagePreferenceMaintainMembershipInbound"
+      measurementSystemPreference:
+        $ref: "#/definitions/measurementSystemPreferenceMaintainMembershipInbound"
+      partyId:
+        type: integer
+        format: int64
+        description: The party identifier representing the individual logged in
+      person:
+        $ref: "#/definitions/personMaintainMembershipInbound"
+      physicalAddresses:
+        $ref: "#/definitions/physicalAddressesMaintainMembershipInboundList"
+      references:
+        $ref: "#/definitions/referencesMaintainMembershipInboundList"
+      roleTypeKey:
+        type: integer
+        format: int64
+        description: The role in which the party engages in respect of the Vitality membership
+      telephones:
+        $ref: "#/definitions/telephonesMaintainMembershipInboundList"
+      timeZonePreference:
+        $ref: "#/definitions/timeZonePreferenceMaintainMembershipInbound"
+      userCredential:
+        $ref: "#/definitions/userCredentialMaintainMembershipInbound"
+      webAddresses:
+        $ref: "#/definitions/webAddressesMaintainMembershipInboundList"
+  partyRoleOutActivateMembershipOutboundUnder:
+    required:
+      - partyId
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      insurerCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      partyId:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      typeCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      typeName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+  partyRoleOutBatchInstructionEnrolmentOutbound:
+    required:
+      - partyId
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      insurerCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      partyId:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      typeCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      typeName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+  partyRoleOutInstructionBasedEnrolmentOutboundUnder:
+    required:
+      - partyId
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      insurerCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      partyId:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      typeCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      typeName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+  partyRoleOutMaintainMembershipOutbound:
+    required:
+      - partyId
+      - typeKey
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      insurerCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      partyId:
+        type: integer
+        format: int64
+        description: "Unique identifier for the party "
+      typeCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      typeKey:
+        type: integer
+        format: int64
+        description: "A unique global ID that identifies a type of; reference, association, source, across the Vitality system regardless of the market the system is deployed in. Its purpose is to convey a particular meaning consistently across all market implementations, regardless of language used. In other words, the use of a unique global id permits the ubiquitous use of a single piece of text describing the same meaning in the system but referenced in various languages of a specific market implementation."
+      typeName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+  partyRoleOutsActivateMembershipOutboundList:
+    type: array
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+    items:
+      $ref: "#/definitions/partyRoleOutActivateMembershipOutboundUnder"
+  partyRoleOutsBatchInstructionEnrolmentOutboundList:
+    type: array
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+    items:
+      $ref: "#/definitions/partyRoleOutBatchInstructionEnrolmentOutbound"
+  partyRoleOutsInstructionBasedEnrolmentOutboundList:
+    type: array
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+    items:
+      $ref: "#/definitions/partyRoleOutInstructionBasedEnrolmentOutboundUnder"
+  partyRoleOutsMaintainMembershipOutboundList:
+    type: array
+    description: The enrolment party. Party is a concept that encompasses people and organisations.
+    items:
+      $ref: "#/definitions/partyRoleOutMaintainMembershipOutbound"
+  partyRolesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyRoleActivateMembershipInbound_isRequired_"
+  partyRolesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyRoleBatchInstructionEnrolmentInbound_isRequired_"
+  partyRolesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyRoleInstructionBasedEnrolmentInbound_isRequired_"
+  partyRolesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/partyRoleMaintainMembershipInbound_isRequired_"
+  personActivateMembershipInbound:
+    properties:
+      bornOn:
+        type: string
+        format: date
+        description: "Person's Date of Birth\r\n\r\nThe date the person was born on\r\n"
+      familyName:
+        type: string
+        description: "Person's  Family Name\r\n\r\nA family name is part of a personal name that is passed from either or both parents to their offspring. \r\nAlso referred to as a surname\r\n"
+      genderTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Gender\r\n\r\nThe gender of the person\r\n\r\nCan only be one of the below two:\r\nF - Female\r\nM - Male\r\n"
+      givenName:
+        type: string
+        description: "Person's Given Name\r\n\r\nA name that precedes ones family name\r\nAlso referred to as a first name\r\n"
+      middleNames:
+        type: string
+        description: "Person's Middle Name(s)\r\n\r\nA secondary given name"
+      preferredName:
+        type: string
+        description: "Person's Preferred Name\r\n\r\nThe name that a person prefers to be known by\r\n"
+      suffix:
+        type: string
+        description: "Name Suffix\r\n\r\nA name suffix, follows a person's full name and provides additional information about the person.\r\n\r\ni.e. OBE, PhD\r\n\r\n"
+      titleTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Title\r\n\r\nThis represents the title that can be used in terms of a person party\r\n\r\n*It must be a valid title that has been configured \r\n"
+    description: A Person represents an individual that is engaged by Vitality in terms of a product offering. The attributes described in the table represent the current names of the person party
+  personBatchInstructionEnrolmentInbound:
+    properties:
+      bornOn:
+        type: string
+        format: date
+        description: "Person's Date of Birth\r\n\r\nThe date the person was born on\r\n"
+      familyName:
+        type: string
+        description: "Person's  Family Name\r\n\r\nA family name is part of a personal name that is passed from either or both parents to their offspring. \r\nAlso referred to as a surname\r\n"
+      genderTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Gender\r\n\r\nThe gender of the person\r\n\r\nCan only be one of the below two:\r\nF - Female\r\nM - Male\r\n"
+      givenName:
+        type: string
+        description: "Person's Given Name\r\n\r\nA name that precedes ones family name\r\nAlso referred to as a first name\r\n"
+      middleNames:
+        type: string
+        description: "Person's Middle Name(s)\r\n\r\nA secondary given name"
+      preferredName:
+        type: string
+        description: "Person's Preferred Name\r\n\r\nThe name that a person prefers to be known by\r\n"
+      suffix:
+        type: string
+        description: "Name Suffix\r\n\r\nA name suffix, follows a person's full name and provides additional information about the person.\r\n\r\ni.e. OBE, PhD\r\n\r\n"
+      titleTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Title\r\n\r\nThis represents the title that can be used in terms of a person party\r\n\r\n*It must be a valid title that has been configured \r\n"
+    description: A Person represents an individual that is engaged by Vitality in terms of a product offering. The attributes described in the table represent the current names of the person party
+  personInstructionBasedEnrolmentInbound:
+    properties:
+      bornOn:
+        type: string
+        format: date
+        description: "Person's Date of Birth\r\n\r\nThe date the person was born on\r\n"
+      familyName:
+        type: string
+        description: "Person's  Family Name\r\n\r\nA family name is part of a personal name that is passed from either or both parents to their offspring. \r\nAlso referred to as a surname\r\n"
+      genderTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Gender\r\n\r\nThe gender of the person\r\n\r\nCan only be one of the below two:\r\nF - Female\r\nM - Male\r\n"
+      givenName:
+        type: string
+        description: "Person's Given Name\r\n\r\nA name that precedes ones family name\r\nAlso referred to as a first name\r\n"
+      middleNames:
+        type: string
+        description: "Person's Middle Name(s)\r\n\r\nA secondary given name"
+      preferredName:
+        type: string
+        description: "Person's Preferred Name\r\n\r\nThe name that a person prefers to be known by\r\n"
+      suffix:
+        type: string
+        description: "Name Suffix\r\n\r\nA name suffix, follows a person's full name and provides additional information about the person.\r\n\r\ni.e. OBE, PhD\r\n\r\n"
+      titleTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Title\r\n\r\nThis represents the title that can be used in terms of a person party\r\n\r\n*It must be a valid title that has been configured \r\n"
+    description: A Person represents an individual that is engaged by Vitality in terms of a product offering. The attributes described in the table represent the current names of the person party
+  personMaintainMembershipInbound:
+    properties:
+      bornOn:
+        type: string
+        format: date
+        description: "Person's Date of Birth\r\n\r\nThe date the person was born on\r\n"
+      familyName:
+        type: string
+        description: "Person's  Family Name\r\n\r\nA family name is part of a personal name that is passed from either or both parents to their offspring. \r\nAlso referred to as a surname\r\n"
+      genderTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Gender\r\n\r\nThe gender of the person\r\n\r\nCan only be one of the below two:\r\nF - Female\r\nM - Male\r\n"
+      givenName:
+        type: string
+        description: "Person's Given Name\r\n\r\nA name that precedes ones family name\r\nAlso referred to as a first name\r\n"
+      middleNames:
+        type: string
+        description: "Person's Middle Name(s)\r\n\r\nA secondary given name"
+      preferredName:
+        type: string
+        description: "Person's Preferred Name\r\n\r\nThe name that a person prefers to be known by\r\n"
+      suffix:
+        type: string
+        description: "Name Suffix\r\n\r\nA name suffix, follows a person's full name and provides additional information about the person.\r\n\r\ni.e. OBE, PhD\r\n\r\n"
+      titleTypeKey:
+        type: integer
+        format: int64
+        description: "Person's Title\r\n\r\nThis represents the title that can be used in terms of a person party\r\n\r\n*It must be a valid title that has been configured \r\n"
+    description: A Person represents an individual that is engaged by Vitality in terms of a product offering. The attributes described in the table represent the current names of the person party
+  physicalAddressActivateMembershipInbound:
+    properties:
+      complex:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+      contactRoles:
+        $ref: "#/definitions/contactRolesActivateMembershipInboundList"
+      country:
+        type: string
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      pOBox:
+        type: boolean
+        description: when enabled disenable complex field
+      place:
+        type: string
+      postalCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      streetAddress1:
+        type: string
+      streetAddress2:
+        type: string
+      streetAddress3:
+        type: string
+      unitNumber:
+        type: integer
+        format: int32
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  physicalAddressBatchInstructionEnrolmentInbound:
+    properties:
+      complex:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+      contactRoles:
+        $ref: "#/definitions/contactRolesBatchInstructionEnrolmentInboundList"
+      country:
+        type: string
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      pOBox:
+        type: boolean
+        description: when enabled disenable complex field
+      place:
+        type: string
+      postalCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      streetAddress1:
+        type: string
+      streetAddress2:
+        type: string
+      streetAddress3:
+        type: string
+      unitNumber:
+        type: integer
+        format: int32
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  physicalAddressInstructionBasedEnrolmentInbound:
+    properties:
+      complex:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+      contactRoles:
+        $ref: "#/definitions/contactRolesInstructionBasedEnrolmentInboundList"
+      country:
+        type: string
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      pOBox:
+        type: boolean
+        description: when enabled disenable complex field
+      place:
+        type: string
+      postalCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      streetAddress1:
+        type: string
+      streetAddress2:
+        type: string
+      streetAddress3:
+        type: string
+      unitNumber:
+        type: integer
+        format: int32
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  physicalAddressMaintainMembershipInbound:
+    properties:
+      complex:
+        type: string
+        description: "The value of the party contact. \r\nE.g. If the Type is Email then the value is the actual email address"
+      contactRoles:
+        $ref: "#/definitions/contactRolesMaintainMembershipInboundList"
+      country:
+        type: string
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      pOBox:
+        type: boolean
+        description: when enabled disenable complex field
+      place:
+        type: string
+      postalCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      streetAddress1:
+        type: string
+      streetAddress2:
+        type: string
+      streetAddress3:
+        type: string
+      unitNumber:
+        type: integer
+        format: int32
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  physicalAddressesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/physicalAddressActivateMembershipInbound"
+  physicalAddressesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/physicalAddressBatchInstructionEnrolmentInbound"
+  physicalAddressesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/physicalAddressInstructionBasedEnrolmentInbound"
+  physicalAddressesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/physicalAddressMaintainMembershipInbound"
+  productActivateMembershipInbound_isRequired_:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  productBatchInstructionEnrolmentInbound:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  productBatchInstructionEnrolmentInbound_isRequired_:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  productInstructionBasedEnrolmentInbound:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  productInstructionBasedEnrolmentInbound_isRequired_:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  productMaintainMembershipInbound:
+    required:
+      - identifierTypeKey
+    properties:
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "Identifier of the product in the Product Bounded Context\r\n"
+    description: "Product associated with the Vitality membership.\r\nA Vitality membership could have different products over time"
+  referenceActivateMembershipInbound:
+    required:
+      - issuedBy
+      - typeKey
+      - value
+    properties:
+      comment:
+        type: string
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      issuedBy:
+        type: integer
+        format: int64
+      typeKey:
+        type: integer
+        format: int64
+        description: The type of the reference
+      value:
+        type: string
+        description: The value of the reference
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+  referenceBatchInstructionEnrolmentInbound:
+    required:
+      - issuedBy
+      - typeKey
+      - value
+    properties:
+      comment:
+        type: string
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      issuedBy:
+        type: integer
+        format: int64
+      typeKey:
+        type: integer
+        format: int64
+        description: The type of the reference
+      value:
+        type: string
+        description: The value of the reference
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+  referenceInstructionBasedEnrolmentInbound:
+    required:
+      - issuedBy
+      - typeKey
+      - value
+    properties:
+      comment:
+        type: string
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      issuedBy:
+        type: integer
+        format: int64
+      typeKey:
+        type: integer
+        format: int64
+        description: The type of the reference
+      value:
+        type: string
+        description: The value of the reference
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+  referenceMaintainMembershipInbound:
+    required:
+      - issuedBy
+      - typeKey
+      - value
+    properties:
+      comment:
+        type: string
+      effectiveFrom:
+        type: string
+        format: date
+        description: The date from which the item is effective.
+      effectiveTo:
+        type: string
+        format: date
+        description: The date to which the item is effective.
+      issuedBy:
+        type: integer
+        format: int64
+      typeKey:
+        type: integer
+        format: int64
+        description: The type of the reference
+      value:
+        type: string
+        description: The value of the reference
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+  referencesActivateMembershipInboundList:
+    type: array
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+    items:
+      $ref: "#/definitions/referenceActivateMembershipInbound"
+  referencesBatchInstructionEnrolmentInboundList:
+    type: array
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+    items:
+      $ref: "#/definitions/referenceBatchInstructionEnrolmentInbound"
+  referencesInstructionBasedEnrolmentInboundList:
+    type: array
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+    items:
+      $ref: "#/definitions/referenceInstructionBasedEnrolmentInbound"
+  referencesMaintainMembershipInboundList:
+    type: array
+    description: "References that are external to Vitality regarding the Vitality Membership. These references include among others:\r\n<ul>\r\n\t<li>the carrier's policy number</li>\r\n</ul>\r\n<ul>\r\n\t<li>the membership / card number the partner has for a member</li>\r\n</ul>"
+    items:
+      $ref: "#/definitions/referenceMaintainMembershipInbound"
+  reinstateVitalityMembershipBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: Effective date to reinstate the Vitality Membership from
+      reason:
+        type: string
+        description: Reason for re-instating the Vitality membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to reinstate a Vitality Membership that has previously been canceled
+  reinstateVitalityMembershipInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: Effective date to reinstate the Vitality Membership from
+      reason:
+        type: string
+        description: Reason for re-instating the Vitality membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to reinstate a Vitality Membership that has previously been canceled
+  reinstateVitalityMembershipMaintainMembershipInbound:
+    required:
+      - effectiveDate
+      - vitalityMembershipId
+    properties:
+      effectiveDate:
+        type: string
+        format: date
+        description: Effective date to reinstate the Vitality Membership from
+      reason:
+        type: string
+        description: Reason for re-instating the Vitality membership
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to reinstate a Vitality Membership that has previously been canceled
+  requestHeaderBatchInstructionEnrolmentInboundUnder:
+    required:
+      - fileName
+      - instructionAction
+      - instructionCode
+      - transactionReference
+    properties:
+      fileName:
+        type: string
+      instructionAction:
+        type: string
+        description: "<font color=\"#323232\">A number indicating the sequence of the current file. Each file should contain a sequence number of the previous file plus one.</font>"
+      instructionCode:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      transactionReference:
+        type: string
+  responseHeaderBatchInstructionEnrolmentOutboundUnder:
+    required:
+      - fileName
+      - instructionAction
+      - instructionCode
+      - processedOn
+      - transactionReference
+    properties:
+      fileName:
+        type: string
+        description: "A detailed description of the; reference, association type associated to a specific key. Its purpose is to describe the context of the unique key in more detail, in order to facilitate easy understanding of the use of the key it describes."
+      instructionAction:
+        type: string
+      instructionCode:
+        type: string
+      processedOn:
+        type: string
+        description: The time stamp with date and time of when the file was proccessed
+      transactionReference:
+        type: string
+  telephoneActivateMembershipInbound:
+    required:
+      - contactNumber
+      - countryDialCode
+    properties:
+      areaDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      contactNumber:
+        type: string
+        description: The number associated to the Party
+      contactRoles:
+        $ref: "#/definitions/contactRolesActivateMembershipInboundList"
+      countryDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      extension:
+        type: string
+        description: Number should an extension be available on the contact number provided
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: The unique global key that represents a telephone contact mechanism type
+  telephoneBatchInstructionEnrolmentInbound:
+    required:
+      - contactNumber
+      - countryDialCode
+    properties:
+      areaDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      contactNumber:
+        type: string
+        description: The number associated to the Party
+      contactRoles:
+        $ref: "#/definitions/contactRolesBatchInstructionEnrolmentInboundList"
+      countryDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      extension:
+        type: string
+        description: Number should an extension be available on the contact number provided
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: The unique global key that represents a telephone contact mechanism type
+  telephoneInstructionBasedEnrolmentInbound:
+    required:
+      - contactNumber
+      - countryDialCode
+    properties:
+      areaDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      contactNumber:
+        type: string
+        description: The number associated to the Party
+      contactRoles:
+        $ref: "#/definitions/contactRolesInstructionBasedEnrolmentInboundList"
+      countryDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      extension:
+        type: string
+        description: Number should an extension be available on the contact number provided
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: The unique global key that represents a telephone contact mechanism type
+  telephoneMaintainMembershipInbound:
+    required:
+      - contactNumber
+      - countryDialCode
+    properties:
+      areaDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      contactNumber:
+        type: string
+        description: The number associated to the Party
+      contactRoles:
+        $ref: "#/definitions/contactRolesMaintainMembershipInboundList"
+      countryDialCode:
+        type: string
+        description: "The country dial code associated to the Party's number. This is and ISO 2 or ISO 3 code"
+      extension:
+        type: string
+        description: Number should an extension be available on the contact number provided
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      typeKey:
+        type: integer
+        format: int64
+        description: The unique global key that represents a telephone contact mechanism type
+  telephonesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/telephoneActivateMembershipInbound"
+  telephonesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/telephoneBatchInstructionEnrolmentInbound"
+  telephonesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/telephoneInstructionBasedEnrolmentInbound"
+  telephonesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/telephoneMaintainMembershipInbound"
+  timeZonePreferenceActivateMembershipInbound:
+    required:
+      - code
+      - value
+    properties:
+      code:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      daylightSavings:
+        type: boolean
+      hourOffset:
+        type: integer
+        format: int32
+      minuteOffset:
+        type: integer
+        format: int32
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  timeZonePreferenceBatchInstructionEnrolmentInbound:
+    required:
+      - code
+      - value
+    properties:
+      code:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      daylightSavings:
+        type: boolean
+      hourOffset:
+        type: integer
+        format: int32
+      minuteOffset:
+        type: integer
+        format: int32
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  timeZonePreferenceInstructionBasedEnrolmentInbound:
+    required:
+      - code
+      - value
+    properties:
+      code:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      daylightSavings:
+        type: boolean
+      hourOffset:
+        type: integer
+        format: int32
+      minuteOffset:
+        type: integer
+        format: int32
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  timeZonePreferenceMaintainMembershipInbound:
+    required:
+      - code
+      - value
+    properties:
+      code:
+        type: string
+        description: "A short name describing the; reference, association type associated to a specific key. It's purpose is to identify a unique key, in order to facilitate easy reference and understanding.\r\nThe short name is used for easy identification for debugging purposes but does not necessarily exclude the option of using it as a reference in itself. For example it could be used to populate a drop down box."
+      daylightSavings:
+        type: boolean
+      hourOffset:
+        type: integer
+        format: int32
+      minuteOffset:
+        type: integer
+        format: int32
+      value:
+        type: string
+        description: "The value that applies to the reference, association, metatdata, or source."
+  updateMembershipProductBatchInstructionEnrolmentInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - identifierTypeKey
+      - vitalityMembershipId
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: " Date that the new membership product is effective from\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "Date that the new membership product is effective to\r\n"
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "New Vitality Membership product\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the Vitality Membership product
+  updateMembershipProductInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - identifierTypeKey
+      - vitalityMembershipId
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: " Date that the new membership product is effective from\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "Date that the new membership product is effective to\r\n"
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "New Vitality Membership product\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the Vitality Membership product
+  updateMembershipProductMaintainMembershipInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - identifierTypeKey
+      - vitalityMembershipId
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+        description: " Date that the new membership product is effective from\r\n"
+      effectiveTo:
+        type: string
+        format: date
+        description: "Date that the new membership product is effective to\r\n"
+      identifierTypeKey:
+        type: integer
+        format: int64
+        description: "New Vitality Membership product\r\n"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+    description: An instruction to update the Vitality Membership product
+  updateMembershipReferenceInstructionBasedEnrolmentInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - issuedBy
+      - referenceTypeKey
+      - referenceValue
+      - vitalityMembershipId
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+      effectiveTo:
+        type: string
+        format: date
+      issuedBy:
+        type: integer
+        format: int64
+      referenceTypeKey:
+        type: integer
+        format: int64
+      referenceValue:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+  updateMembershipReferenceMaintainMembershipInbound:
+    required:
+      - effectiveFrom
+      - effectiveTo
+      - issuedBy
+      - referenceTypeKey
+      - referenceValue
+      - vitalityMembershipId
+    properties:
+      effectiveFrom:
+        type: string
+        format: date
+      effectiveTo:
+        type: string
+        format: date
+      issuedBy:
+        type: integer
+        format: int64
+      referenceTypeKey:
+        type: integer
+        format: int64
+      referenceValue:
+        type: string
+      vitalityMembershipId:
+        type: integer
+        format: int64
+  updateMembershipReferencesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/updateMembershipReferenceMaintainMembershipInbound"
+  updateMembershipRoleBatchInstructionEnrolmentInbound:
+    required:
+      - action
+      - vitalityMembershipId
+    properties:
+      action:
+        type: string
+        description: "Action: CREATE, DELETE, UPDATE for membership roles\r\n"
+      partyRoles:
+        $ref: "#/definitions/partyRolesBatchInstructionEnrolmentInboundList"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+  updateMembershipRoleInstructionBasedEnrolmentInbound:
+    required:
+      - action
+      - vitalityMembershipId
+    properties:
+      action:
+        type: string
+        description: "Action: CREATE, DELETE, UPDATE for membership roles\r\n"
+      partyRoles:
+        $ref: "#/definitions/partyRolesInstructionBasedEnrolmentInboundList"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+  updateMembershipRoleMaintainMembershipInbound:
+    required:
+      - action
+      - vitalityMembershipId
+    properties:
+      action:
+        type: string
+        description: "Action: CREATE, DELETE, UPDATE for membership roles\r\n"
+      partyRoles:
+        $ref: "#/definitions/partyRolesMaintainMembershipInboundList"
+      vitalityMembershipId:
+        type: integer
+        format: int64
+  updateMembershipRolesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/updateMembershipRoleBatchInstructionEnrolmentInbound"
+  updateMembershipRolesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/updateMembershipRoleInstructionBasedEnrolmentInbound"
+  updateMembershipRolesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/updateMembershipRoleMaintainMembershipInbound"
+  userCredentialActivateMembershipInbound:
+    required:
+      - carrierPartyId
+      - value
+    properties:
+      carrierPartyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      validUntil:
+        type: string
+        format: date
+      validationSystem:
+        type: string
+      value:
+        type: string
+  userCredentialBatchInstructionEnrolmentInbound:
+    required:
+      - carrierPartyId
+      - value
+    properties:
+      carrierPartyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      validUntil:
+        type: string
+        format: date
+      validationSystem:
+        type: string
+      value:
+        type: string
+  userCredentialInstructionBasedEnrolmentInbound:
+    required:
+      - carrierPartyId
+      - value
+    properties:
+      carrierPartyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      validUntil:
+        type: string
+        format: date
+      validationSystem:
+        type: string
+      value:
+        type: string
+  userCredentialMaintainMembershipInbound:
+    required:
+      - carrierPartyId
+      - value
+    properties:
+      carrierPartyId:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      validUntil:
+        type: string
+        format: date
+      validationSystem:
+        type: string
+      value:
+        type: string
+  vitalityMembershipActivateMembershipOutboundUnder:
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: An Id that uniquely identifies the Vitality Membership
+  vitalityMembershipInstructionBasedEnrolmentOutboundUnder:
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: An Id that uniquely identifies the Vitality Membership
+  vitalityMembershipMaintainMembershipOutbound:
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+        format: int64
+        description: An Id that uniquely identifies the Vitality Membership
+    description: The Vitality Membership is the agreement between the member and Vitality in the context of the Vitality product
+  webAddressActivateMembershipInbound:
+    required:
+      - uRL
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesActivateMembershipInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      uRL:
+        type: string
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  webAddressBatchInstructionEnrolmentInbound:
+    required:
+      - uRL
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesBatchInstructionEnrolmentInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      uRL:
+        type: string
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  webAddressInstructionBasedEnrolmentInbound:
+    required:
+      - uRL
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesInstructionBasedEnrolmentInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      uRL:
+        type: string
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  webAddressMaintainMembershipInbound:
+    required:
+      - uRL
+    properties:
+      contactRoles:
+        $ref: "#/definitions/contactRolesMaintainMembershipInboundList"
+      id:
+        type: integer
+        format: int64
+        description: A unique identifier within the system of record that describes a specific instance of an entity or attribute.
+      uRL:
+        type: string
+        description: "Type of the Party Contact Mecahnism\r\nE.g. Email, MobileNumber"
+  webAddressesActivateMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/webAddressActivateMembershipInbound"
+  webAddressesBatchInstructionEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/webAddressBatchInstructionEnrolmentInbound"
+  webAddressesInstructionBasedEnrolmentInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/webAddressInstructionBasedEnrolmentInbound"
+  webAddressesMaintainMembershipInboundList:
+    type: array
+    items:
+      $ref: "#/definitions/webAddressMaintainMembershipInbound"

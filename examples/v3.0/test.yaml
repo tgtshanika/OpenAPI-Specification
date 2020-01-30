@@ -119,12 +119,11 @@ paths:
         - name: tags
           in: query
           description: Tags to filter by
+          style: deepObject
           required: true
-          explode: true
+          explode: false
           schema:
-            type: array
-            items:
-              type: string
+            $ref: "#/components/schemas/DateRange"
       responses:
         '200':
           description: successful operation
@@ -580,6 +579,17 @@ components:
       name: api_key
       in: header
   schemas:
+    DateRange:
+      type: object
+      properties:
+        start:
+          type: string
+          description: The starting date.
+          format: date
+        end:
+          type: string
+          description: The ending date.
+          format: date
     Order:
       type: object
       properties:

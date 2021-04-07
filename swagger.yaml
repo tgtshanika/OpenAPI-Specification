@@ -1,0 +1,402 @@
+openapi: 3.0.2
+info:
+  title: ms_evolve_orchestration_cards_v1
+  description: Servicio encargado de orquestar la creación de tarjetas en MPTS
+  version: 1.0.0
+servers:
+  - url: 'https://ms-evolve-orchestration-cards.paas.nft.eci.geci/{basePath}'
+    description: NFT environment
+    variables:
+      basePath:
+        default: payments/cards-orchestration/v1
+  - url: 'https://ms-evolve-orchestration-cards.paas.uat.eci.geci/{basePath}'
+    description: UAT environment
+    variables:
+      basePath:
+        default: payments/cards-orchestration/v1
+  - url: 'http://127.0.0.1:8080/{basePath}'
+    description: Local environment
+    variables:
+      basePath: {}
+security:
+  - default: []
+paths:
+  /credit-cards/pin-supply:
+    post:
+      tags:
+        - Aprovisionamiento de pin
+      summary: Aprovisionamiento de pin
+      description: Aprovisionamiento de pin
+      operationId: pinSupply
+      requestBody:
+        description: Datos de entrada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/pin_provisioning_request'
+        required: true
+      responses:
+        '200':
+          $ref: '#/components/responses/pin_provisioning_rs'
+        '400':
+          $ref: '#/components/responses/bad_request'
+        '500':
+          $ref: '#/components/responses/internal_error'
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: null
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+  /mpts-cards-requests:
+    post:
+      tags:
+        - Solicitud de tarjeta a MPTS
+      summary: Crea la solicitud de una nueva tarjeta a MPTS
+      description: >-
+        Este servicio crea una nueva solicitud de tarjeta a MPTS con los datos
+        del cliente dado de alta en SAT
+      operationId: createMPTSCard
+      requestBody:
+        description: Datos de entrada
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/credit_card_creation_request'
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/credit_card_creation_void_rs'
+        '400':
+          $ref: '#/components/responses/bad_request'
+        '500':
+          $ref: '#/components/responses/internal_error'
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: null
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+  '/mpts-cards-requests/{requestCardIdentifier}':
+    get:
+      tags:
+        - Solicitud de tarjeta a MPTS
+      summary: Retorna el estado de la solicitud de tarjeta a MPTS
+      description: >-
+        Este servicio retorna el historial con todos los estados por los cuales
+        ha transcurrido la solicitud de tarjeta enviada a MPTS.
+      operationId: getRequestCardStatus
+      parameters:
+        - name: requestCardIdentifier
+          in: path
+          description: Identificador de la solicitud de tarjeta a MPTS
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/credit_card_creation_rs'
+        '400':
+          $ref: '#/components/responses/bad_request'
+        '500':
+          $ref: '#/components/responses/internal_error'
+      security:
+        - default: []
+      x-auth-type: Application & Application User
+      x-throttling-tier: null
+      x-wso2-application-security:
+        security-types:
+          - oauth2
+        optional: false
+components:
+  schemas:
+    pin_provisioning_request:
+      required:
+        - card_contract
+        - identifier
+        - origin
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: >-
+            Identificación de solicitud creada al momento de dar de alta cliente
+            en SAT
+          example: FECI9BpT6tyKSsqrKLbiEox53w
+        origin:
+          type: string
+          description: Origen de la solicitud
+          enum:
+            - WEB
+            - APP
+        card_contract:
+          description: Datos del contrato de tarjeta
+          allOf:
+            - $ref: '#/components/schemas/pin_provisioning_response/card_contract'
+        status_history:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/status'
+    credit_card_creation_request:
+      type: object
+      properties:
+        RequestReference:
+          type: string
+          description: >-
+            Request reference. This is a string of characters that uniquely
+            identifies a PIN selection/delivery process. It is identical to the
+            value when creating the request (i.e. that is provided in the
+            SmartPINV2_IssuerRequestCreation_VX.X interface). Ex:
+            “01acs24ABFHd71hd”.
+        CardholderIdentifier:
+          type: string
+          description: String of characters identifying the cardholder.
+        ServiceType:
+          type: integer
+          description: 'Service Type (Delivery=0, Selection ==1, Reminder=2 or Change=3).'
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+        RequestMedia:
+          type: integer
+          description: 'SMS=0, IVR=1 or WEB=2'
+          format: int32
+          enum:
+            - 0
+            - 1
+            - 2
+        ActionPerformed:
+          type: string
+          description: >-
+            Label of the action performed. This indicates the status of the
+            request.
+        ActionDateTime:
+          type: string
+          description: >-
+            The data and time when the status change occurred. is formatted in
+            this way: DDMMYYYY_HHMMSS.
+        ActionStatus:
+          type: boolean
+          description: 'Status (“True” for Successful, “False” for Failed).'
+        ERROR_CODE:
+          type: integer
+          description: >-
+            Error code returned when an error was raised on the action. This
+            field is only used for PIN delivery via “SMS”.
+          format: int32
+        ERROR_MSG:
+          type: string
+          description: >-
+            Error message returned when an error was raised on the action. This
+            field is only used for PIN delivery via “SMS”.
+        SelectedPIN:
+          $ref: '#/components/schemas/selected_pin'
+    selected_pin:
+      type: object
+      properties:
+        EncryptedPIN:
+          type: string
+          description: Encrypted value of the PIN selected
+        EncryptionKeyLabel:
+          type: string
+          description: Label of the key used to encrypt the PIN (if HSM key)
+        ClearPINHash:
+          type: string
+          description: integrity check
+        isWeakCode:
+          type: boolean
+          description: Indicates the strength of the selected PIN
+    credit_card_creation_response:
+      required:
+        - identifier
+      type: object
+      properties:
+        identifier:
+          type: string
+          description: >-
+            Identificación de solicitud creada al momento de dar de alta cliente
+            en SAT
+          example: FECI9BpT6tyKSsqrKLbiEox53w
+        status_history:
+          readOnly: true
+          allOf:
+            - $ref: '#/components/schemas/status'
+    pin_provisioning_response:
+      type: object
+      properties:
+        signature:
+          type: string
+          description: respuesta de SmartPin cifrada
+    card_contract:
+      required:
+        - embossed_family_name
+        - embossed_given_name
+      type: object
+      properties:
+        embossed_given_name:
+          type: string
+          description: Nombre a imprimir en la tarjeta (plástico)
+        embossed_family_name:
+          type: string
+          description: Apellido a imprimir en la tarjeta (plástico)
+    status:
+      properties:
+        status:
+          type: string
+          readOnly: true
+          enum:
+            - IN_PROGRESS_SAT
+            - SUCCESS_SAT
+            - ERROR_SAT
+            - IN_PROGRESS_PIN_PROVISIONING
+            - GOT_PUBLIC_RSA_KEY_PIN_BLOCK
+            - ERROR_TO_GET_PUBLIC_RSA_KEY_PIN_BLOCK
+            - PIN_PROVISIONING
+            - SUCCESS_PIN_PROVISIONING
+            - ERROR_PIN_PROVISIONING
+            - IN_PROGRESS_MPTS
+            - CREATED_CLIENT_MPTS
+            - ERROR_TO_CREATE_CLIENT_MPTS
+            - CREATED_ACCOUNT_MPTS
+            - ERROR_TO_CREATE_ACCOUNT_MPTS
+            - UPDATED_ACCOUNT_WITH_AUTHORIZED
+            - ERROR_TO_UPDATE_ACCOUNT_WITH_AUTHORIZED
+            - CREATED_CARD_MPTS
+            - ERROR_TO_CREATE_CARD_MPTS
+            - UPDATED_SAT
+            - ERROR_TO_UPDATE_SAT
+            - SET_PIN_ENCRYPTED
+            - ERROR_TO_SET_PIN_ENCRYPTED
+            - REISSUED_CARD
+            - ERROR_TO_REISSUE_CARD
+            - ACTIVATE_ACCOUNT
+            - ERROR_TO_ACTIVATE_ACCOUNT
+            - ACTIVATE_CARD
+            - ERROR_TO_ACTIVATE_CARD
+            - SUCCESS
+        date:
+          type: string
+          format: date-time
+          readOnly: true
+    error_response:
+      type: object
+      properties:
+        error:
+          required:
+            - message
+            - request_id
+          type: object
+          properties:
+            message:
+              type: string
+              description: >-
+                Describe la causa del error. Las descripciones se deberán
+                componer de textos fijos para cada tipo de error producido, por
+                lo que deben ser generadas a partir de una estructura de datos
+                como un enumerado.
+            request_id:
+              type: string
+              description: >-
+                Describe un código de petición único. Esto permite disponer de
+                trazabilidad en caso de necesitar inspeccionar logs.
+            details:
+              type: string
+              description: >-
+                Contiene un objeto con el detalle adicional de errores que desee
+                aportar cada product owner del aplicativo sobre el que se
+                desarrolla el servicio REST y que debe ser definido por este.
+                Puede contener arrays con mayor detalle.
+            code:
+              type: integer
+              description: >-
+                Respuesta proporcionada por las aplicaciones en caso de error.
+                Dicho valor será utilizado como Código de Error de Aplicación,
+                siendo su empleo opcional y de libre uso por parte de los
+                responsables de las aplicaciones para gestionar sus propios
+                códigos de retorno ante errores, aunque en caso de utilizarse,
+                es obligatorio documentar apropiadamente el significado de cada
+                uno de los posibles valores devueltos en dicho atributo,
+                pudiendo documentarse en el propio fichero OpenAPI o pudiendo
+                ser documentado apropiadamente (subiendo documentación adicional
+                al API con los posibles códigos de error o un enlace a dicha
+                documentación a un enlace externo) para que sea fácilmente
+                accesible en caso de precisarse consultar.
+          description: Payload estandard de ECI segun gobierno de API
+  responses:
+    credit_card_creation_void_rs:
+      description: >-
+        En caso de que la solicitud de tarjeta a MPTS se haya realizado
+        correctamente
+    pin_provisioning_rs:
+      description: En caso de que aprovisionamiento de pin se realice correctamente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/pin_provisioning_response'
+    credit_card_creation_rs:
+      description: En caso de que se retorne el historial de la solicitud correctamente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/credit_card_creation_response'
+    bad_request:
+      description: Error controlado debido a una petición incorrecta
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error_response'
+    internal_error:
+      description: En caso de error general en el servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/error_response'
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: 'https://test.com'
+          scopes: {}
+x-wso2-auth-header: Authorization
+x-wso2-cors:
+  corsConfigurationEnabled: false
+  accessControlAllowOrigins:
+    - '*'
+  accessControlAllowCredentials: false
+  accessControlAllowHeaders:
+    - authorization
+    - Access-Control-Allow-Origin
+    - Content-Type
+    - SOAPAction
+  accessControlAllowMethods:
+    - GET
+    - PUT
+    - POST
+    - DELETE
+    - PATCH
+    - OPTIONS
+x-wso2-production-endpoints:
+  urls:
+    - 'https://run.mocky.io/v3/f38eac77-4775-43bf-96dc-c8c6e3056a96'
+  type: http
+x-wso2-sandbox-endpoints:
+  urls:
+    - 'https://run.mocky.io/v3/f38eac77-4775-43bf-96dc-c8c6e3056a96'
+  type: http
+x-wso2-basePath: /ms_evolve_orchestration_cards_v2/1.0.0
+x-wso2-transports:
+  - http
+  - https
+x-wso2-response-cache:
+  enabled: false
+  cacheTimeoutInSeconds: 300

@@ -36,6 +36,7 @@ paths:
       summary: Add a new pet to the store
       description: ''
       operationId: addPet
+      x-sample: Test
       responses:
         '405':
           description: Invalid input
